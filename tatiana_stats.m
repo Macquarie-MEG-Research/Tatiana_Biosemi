@@ -1,6 +1,6 @@
 function tatiana_stats
 
-layout='/Users/mq20096022/Downloads/fieldtrip-master/template/layout/biosemi64.lay';
+layout='/Users/mq20096022/Downloads/fieldtrip-master/template/layout/biosemi64.lay'; %need to change these to reflect your own directory structure
 neighbours=load('/Users/mq20096022/Documents/Matlab/fieldtrip-master/template/neighbours/biosemi64_neighb.mat');
 
 cfg = [];
