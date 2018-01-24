@@ -5,7 +5,7 @@ neighbours=load('/Users/mq20096022/Documents/Matlab/fieldtrip-master/template/ne
 
 cfg = [];
 cfg.method = 'montecarlo';       % use the Monte Carlo Method to calculate the significance probability
-cfg.statistic = 'ft_statfun_indepsamplesT'; % use the independent samples T-statistic as a measure to
+cfg.statistic = 'ft_statfun_depsamplesT'; % use the independent samples T-statistic as a measure to
 % evaluate the effect at the sample level
 cfg.latency = [0.08 .12]; %time window of interest - here its the N1
 cfg.avgovertime = 'yes';
@@ -24,15 +24,31 @@ cfg.clustertail = 0;
 cfg.correcttail = 'prob';% alpha level of the permutation test corrects by multiplying the p-valuses by 2. Makes interpretation easier
 cfg.numrandomization = 500;      % number of draws from the permutation distribution
 
-%Design matrix
-design = zeros(1,size(gr_pause_null_timelock_clean_all_GM.individual,1) + size(gr_pause_null_timelock_clean_all_GM.individual,1));
-design(1,1:size(gr_pause_null_timelock_clean_all_GM.individual,1)) = 1;
-design(1,(size(gr_pause_null_timelock_clean_all_GM.individual,1)+1):(size(gr_pause_null_timelock_clean_all_GM.individual,1) + size(gr_pause_null_timelock_clean_all_GM.individual,1)))= 2;
+% %Design matrix
+% design = zeros(1,size(gr_pause_null_timelock_clean_all_GM.individual,1) + size(gr_pause_null_timelock_clean_all_GM.individual,1));
+% design(1,1:size(gr_pause_null_timelock_clean_all_GM.individual,1)) = 1;
+% design(1,(size(gr_pause_null_timelock_clean_all_GM.individual,1)+1):(size(gr_pause_null_timelock_clean_all_GM.individual,1) + size(gr_pause_null_timelock_clean_all_GM.individual,1)))= 2;
+% 
+% cfg.design = design;             % design matrix
+% cfg.ivar  = 1;                   % number or list with indices indicating the independent variable(s)
 
-cfg.design = design;             % design matrix
-cfg.ivar  = 1;                   % number or list with indices indicating the independent variable(s)
 
-[stat] = ft_timelockstatistics(cfg, gr_pause_onset_timelock_clean_all_GM,ug_pause_onset_timelock_clean_all_GM);
+subj = 18;
+design = zeros(2,2*subj);
+for i = 1:subj
+  design(1,i) = i;
+end
+for i = 1:subj
+  design(1,subj+i) = i;
+end
+design(2,1:subj)        = 1;
+design(2,subj+1:2*subj) = 2;
+
+cfg.design = design;
+cfg.uvar  = 1;
+cfg.ivar  = 2;
+
+[stat] = ft_timelockstatistics(cfg, gr_pause_start_timelock_clean_all_GM,ug_pause_start_timelock_clean_all_GM);
 
 ft_hastoolbox('brewermap', 1);         % ensure this toolbox is on the path - better colour map than jet
 
